@@ -19,25 +19,33 @@ import com.jme3.bullet.collision.shapes.MeshCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.bullet.control.GhostControl;
-import com.jme3.bullet.control.PhysicsControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Vector3f;
 import com.jme3.physicsloader.PhysicsData;
 import com.jme3.physicsloader.PhysicsLoader;
 import com.jme3.physicsloader.PhysicsLoaderSettings;
-import com.jme3.physicsloader.PhysicsData.PhysicsType;
+import com.jme3.physicsloader.rigidbody.RigidBody;
+import com.jme3.physicsloader.rigidbody.RigidBodyType;
 import com.jme3.physicsloader.utils.Helpers;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.Control;
 
-public class BulletPhysicsLoader implements PhysicsLoader<PhysicsControl>{
+public class BulletPhysicsLoader implements PhysicsLoader<Control>{
 	private static final Logger logger=Logger.getLogger(BulletPhysicsLoader.class.getName());
 	
 	@Override
-	public PhysicsControl load(PhysicsLoaderSettings settings,final Spatial entityNode,final PhysicsData data) {
-		if(data.type==PhysicsType.NONE)return null;
+	public Control load(PhysicsLoaderSettings settings, Spatial spatial, PhysicsData data) {
+		if(data instanceof RigidBody)return loadRB(settings,spatial,(RigidBody)data);
+		
+		return null;
+	}
+	
+	protected Control loadRB(final PhysicsLoaderSettings settings,final Spatial spatial,final RigidBody data){
+
+		if(data.type==RigidBodyType.NONE)return null;
 		CollisionShape collisionShape=null;
 
 		switch(data.shape){
@@ -47,28 +55,28 @@ public class BulletPhysicsLoader implements PhysicsLoader<PhysicsControl>{
 								
 				final Object vhacd_factoryf=vhacd_factory;
 				final CompoundCollisionShape csh=new CompoundCollisionShape();
-				entityNode.depthFirstTraversal(new SceneGraphVisitor(){
+				spatial.depthFirstTraversal(new SceneGraphVisitor(){
 					@Override
 					public void visit(Spatial s) {
 						if(s instanceof Geometry){
 							Geometry g=(Geometry)s;
 							Mesh mesh=g.getMesh();
 							CollisionShape shape=null;
-							if(data.type==PhysicsType.STATIC){
+							if(data.type==RigidBodyType.STATIC){
 								shape=new MeshCollisionShape(mesh);
 							}else{
 								if(vhacd_factoryf!=null){				
 									com.jme3.bullet.vhacd.VHACDCollisionShapeFactory f=(com.jme3.bullet.vhacd.VHACDCollisionShapeFactory)vhacd_factoryf;
-									CompoundCollisionShape ccs=f.create(entityNode);
+									CompoundCollisionShape ccs=f.create(spatial);
 									for(ChildCollisionShape c:ccs.getChildren()){
 										c.shape.setScale(g.getWorldScale());
-										csh.addChildShape(c.shape,g.getWorldTranslation().subtract(entityNode.getWorldTranslation()));
+										csh.addChildShape(c.shape,g.getWorldTranslation().subtract(spatial.getWorldTranslation()));
 									}				
 								}else shape=new GImpactCollisionShape(mesh);
 							}
 							if(shape!=null){
 								shape.setScale(g.getWorldScale());
-								csh.addChildShape(shape,g.getWorldTranslation().subtract(entityNode.getWorldTranslation()));
+								csh.addChildShape(shape,g.getWorldTranslation().subtract(spatial.getWorldTranslation()));
 							}
 						}
 					}
@@ -77,7 +85,7 @@ public class BulletPhysicsLoader implements PhysicsLoader<PhysicsControl>{
 				break;
 
 			case SPHERE:
-				Vector3f xtendsphere=Helpers.getBoundingBox(entityNode).getExtent(null);
+				Vector3f xtendsphere=Helpers.getBoundingBox(spatial).getExtent(null);
 				float radius=xtendsphere.x;
 				if(xtendsphere.y>radius) radius=xtendsphere.y;
 				if(xtendsphere.z>radius) radius=xtendsphere.z;
@@ -86,7 +94,7 @@ public class BulletPhysicsLoader implements PhysicsLoader<PhysicsControl>{
 
 			case HULL:
 				final Collection<Float> points=new ArrayList<Float>();
-				entityNode.depthFirstTraversal(new SceneGraphVisitor(){
+				spatial.depthFirstTraversal(new SceneGraphVisitor(){
 					@Override
 					public void visit(Spatial s) {
 						if(s instanceof Geometry){
@@ -103,25 +111,25 @@ public class BulletPhysicsLoader implements PhysicsLoader<PhysicsControl>{
 				break;
 
 			case BOX:
-				BoundingBox bbox=Helpers.getBoundingBox(entityNode);
+				BoundingBox bbox=Helpers.getBoundingBox(spatial);
 				collisionShape=new BoxCollisionShape(bbox.getExtent(null));
 				break;
 
 			case CAPSULE:
-				BoundingBox cbox=Helpers.getBoundingBox(entityNode);
+				BoundingBox cbox=Helpers.getBoundingBox(spatial);
 				Vector3f xtendcapsule=cbox.getExtent(null);
 				float r=(xtendcapsule.x>xtendcapsule.z?xtendcapsule.x:xtendcapsule.z);
 				collisionShape=new CapsuleCollisionShape(r,xtendcapsule.y-r*2f);
 				break;
 
 			case CYLINDER:
-				BoundingBox cybox=Helpers.getBoundingBox(entityNode);
+				BoundingBox cybox=Helpers.getBoundingBox(spatial);
 				Vector3f xtendcylinder=cybox.getExtent(null);
 				collisionShape=new CylinderCollisionShape(xtendcylinder);
 				break;
 
 			case CONE:
-				BoundingBox cobox=Helpers.getBoundingBox(entityNode);
+				BoundingBox cobox=Helpers.getBoundingBox(spatial);
 				Vector3f xtendcone=cobox.getExtent(null);
 				collisionShape=new ConeCollisionShape((xtendcone.x>xtendcone.z?xtendcone.x:xtendcone.z),xtendcone.y,PhysicsSpace.AXIS_Y);
 				break;
@@ -132,11 +140,11 @@ public class BulletPhysicsLoader implements PhysicsLoader<PhysicsControl>{
 		
 		if(collisionShape==null) return null;
 		collisionShape.setMargin(data.margin);
-		if(data.isGhost){
+		if(data.type==RigidBodyType.GHOST){
 			GhostControl ghost=new GhostControl(collisionShape);
 			return ghost;
 		}else{
-			float mass=data.type==PhysicsType.STATIC?0:data.mass;
+			float mass=data.type==RigidBodyType.STATIC?0:data.mass;
 			RigidBodyControl rigidbody=settings.useEnhancedRigidbodies()?new BulletEnhancedRigidBodyControl(collisionShape,mass):new RigidBodyControl(collisionShape,mass);
 			rigidbody.setFriction(data.friction);
 			rigidbody.setAngularDamping(data.angularDamping);
@@ -149,7 +157,7 @@ public class BulletPhysicsLoader implements PhysicsLoader<PhysicsControl>{
 			rigidbody.setCollideWithGroups(data.collisionMask);
 			return rigidbody;
 		}
-
 	}
 
+	
 }
