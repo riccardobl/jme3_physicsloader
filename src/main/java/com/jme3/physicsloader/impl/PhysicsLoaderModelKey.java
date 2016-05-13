@@ -5,8 +5,8 @@ import com.jme3.physicsloader.PhysicsLoader;
 import com.jme3.physicsloader.PhysicsLoaderSettings;
 import com.jme3.physicsloader.impl.bullet.BulletPhysicsLoader;
 
-
-public class PhysicsLoaderModelKey extends ModelKey implements PhysicsLoaderSettings {
+@SuppressWarnings("unchecked")
+public class PhysicsLoaderModelKey<RETURN_TYPE extends PhysicsLoaderSettings> extends ModelKey implements PhysicsLoaderSettings {
 	protected  PhysicsLoader<?> phyLoader;
 	protected Object vhacdFactory;
 	protected boolean	enhancedrbs=false;
@@ -20,12 +20,12 @@ public class PhysicsLoaderModelKey extends ModelKey implements PhysicsLoaderSett
 	}
 	
 	@Override
-	public PhysicsLoaderModelKey usePhysics(boolean v){
+	public RETURN_TYPE usePhysics(boolean v){
 		try{
 			if(v)return usePhysics(new BulletPhysicsLoader());
 			else return usePhysics(null);
 		}catch(Throwable e){}
-		return this;
+		return (RETURN_TYPE)this;
 	}
 
 	@Override
@@ -34,23 +34,23 @@ public class PhysicsLoaderModelKey extends ModelKey implements PhysicsLoaderSett
 	}
 	
 	@Override
-	public PhysicsLoaderModelKey useVHACD(Object factory){
+	public RETURN_TYPE useVHACD(Object factory){
 		if(factory ==null){
 			vhacdFactory=null;
-			return this;
+			return (RETURN_TYPE)this;
 		}
 		try{
 			if(factory instanceof com.jme3.bullet.vhacd.VHACDCollisionShapeFactory||factory instanceof Boolean){
 				vhacdFactory=factory;
 			}
 		}catch(Throwable e){}
-		return this;
+		return (RETURN_TYPE)this;
 	}
 	
 	@Override
-	public PhysicsLoaderModelKey usePhysics(PhysicsLoader<?> phyLoader){
+	public RETURN_TYPE usePhysics(PhysicsLoader<?> phyLoader){
 		this.phyLoader= phyLoader;
-		return this;
+		return (RETURN_TYPE)this;
 	}
 	
 	@Override
@@ -59,9 +59,9 @@ public class PhysicsLoaderModelKey extends ModelKey implements PhysicsLoaderSett
 	}
 
 	@Override
-	public PhysicsLoaderSettings useEnhancedRigidbodies(boolean v) {
+	public RETURN_TYPE useEnhancedRigidbodies(boolean v) {
 		enhancedrbs=v;
-		return this;
+		return (RETURN_TYPE)this;
 	}
 
 	@Override
