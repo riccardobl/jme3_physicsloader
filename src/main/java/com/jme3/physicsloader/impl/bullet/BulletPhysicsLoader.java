@@ -35,6 +35,21 @@ import com.jme3.scene.control.Control;
 
 public class BulletPhysicsLoader implements PhysicsLoader<Control>{
 	private static final Logger logger=Logger.getLogger(BulletPhysicsLoader.class.getName());
+	protected boolean useCompoundCapsule=false;
+	
+	/**
+	 * @description Use a compound shape instead of CapsuleCollisionShape. See https://hub.jmonkeyengine.org/t/btcapsuleshape-location-isnt-accurate-at-all/35752/15 for more info.
+	 * @param v
+	 * @return
+	 */
+	public BulletPhysicsLoader useCompoundCapsule(boolean v){
+		useCompoundCapsule=v;
+		return this;
+	}
+	
+	public boolean useCompoundCapsule(){
+		return useCompoundCapsule;
+	}
 	
 	@Override
 	public Control load(PhysicsLoaderSettings settings, Spatial spatial, PhysicsData data) {
@@ -116,22 +131,22 @@ public class BulletPhysicsLoader implements PhysicsLoader<Control>{
 				break;
 
 			case CAPSULE:
-				BoundingBox cbox=Helpers.getBoundingBox(spatial);
+				BoundingBox cbox=Helpers.getBoundingBox(spatial);				
 				Vector3f xtendcapsule=cbox.getExtent(null);
 				float r=(xtendcapsule.x>xtendcapsule.z?xtendcapsule.x:xtendcapsule.z);
-				collisionShape=new CapsuleCollisionShape(r,xtendcapsule.y-r*2f);
+				collisionShape=useCompoundCapsule?buildCompoundCapsule(r,xtendcapsule.y*2f):new CapsuleCollisionShape(r,xtendcapsule.y*2f-(r*2f));		
 				break;
 
 			case CYLINDER:
 				BoundingBox cybox=Helpers.getBoundingBox(spatial);
 				Vector3f xtendcylinder=cybox.getExtent(null);
-				collisionShape=new CylinderCollisionShape(xtendcylinder);
+				collisionShape=new CylinderCollisionShape(xtendcylinder,PhysicsSpace.AXIS_Y);
 				break;
 
 			case CONE:
 				BoundingBox cobox=Helpers.getBoundingBox(spatial);
 				Vector3f xtendcone=cobox.getExtent(null);
-				collisionShape=new ConeCollisionShape((xtendcone.x>xtendcone.z?xtendcone.x:xtendcone.z),xtendcone.y,PhysicsSpace.AXIS_Y);
+				collisionShape=new ConeCollisionShape((xtendcone.x>xtendcone.z?xtendcone.x:xtendcone.z),xtendcone.y*2f,PhysicsSpace.AXIS_Y);
 				break;
 			default:
 				// Should never happen.
@@ -158,6 +173,17 @@ public class BulletPhysicsLoader implements PhysicsLoader<Control>{
 			return rigidbody;
 		}
 	}
+	
+	   protected CollisionShape buildCompoundCapsule(float radius,float height) {
+	        float cylinder_height= height- (2.0f * radius) ;
+	        CylinderCollisionShape cylinder = new CylinderCollisionShape(new Vector3f(radius, cylinder_height/2f,radius)/*NB constructor want half extents*/,1);
+	        SphereCollisionShape sphere=new SphereCollisionShape(radius);        
+	        CompoundCollisionShape compoundCollisionShape = new CompoundCollisionShape();
+	        compoundCollisionShape.addChildShape(sphere,new Vector3f(0,-cylinder_height/2f,0)); 	        
+	        compoundCollisionShape.addChildShape(cylinder, new Vector3f(0,0, 0)); 	        
+	        compoundCollisionShape.addChildShape(sphere,new Vector3f(0,+cylinder_height/2f,0)); 
+	        return compoundCollisionShape;
+	    }
 
 	
 }
