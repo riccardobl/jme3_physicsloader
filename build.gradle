@@ -1,3 +1,11 @@
+def DEV_MODE=true
+if (DEV_MODE){
+	apply plugin: "maven"
+	version="SNAPSHOT"
+	group="dev"
+}
+
+
 buildscript {
   repositories {
     maven {

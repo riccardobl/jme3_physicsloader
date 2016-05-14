@@ -7,7 +7,7 @@ import com.jme3.physicsloader.impl.bullet.BulletPhysicsLoader;
 
 @SuppressWarnings("unchecked")
 public class PhysicsLoaderModelKey<RETURN_TYPE extends PhysicsLoaderSettings> extends ModelKey implements PhysicsLoaderSettings {
-	protected  PhysicsLoader<?> phyLoader;
+	protected  PhysicsLoader<?,?> phyLoader;
 	protected Object vhacdFactory;
 	protected boolean	enhancedrbs=false;
 
@@ -48,13 +48,13 @@ public class PhysicsLoaderModelKey<RETURN_TYPE extends PhysicsLoaderSettings> ex
 	}
 	
 	@Override
-	public RETURN_TYPE usePhysics(PhysicsLoader<?> phyLoader){
+	public RETURN_TYPE usePhysics(PhysicsLoader<?,?> phyLoader){
 		this.phyLoader= phyLoader;
 		return (RETURN_TYPE)this;
 	}
 	
 	@Override
-	public PhysicsLoader<?> getPhysicsLoader(){
+	public PhysicsLoader<?,?> getPhysicsLoader(){
 		return phyLoader;
 	}
 

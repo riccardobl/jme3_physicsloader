@@ -13,9 +13,9 @@ public interface PhysicsLoaderSettings{
 	 * @param phyProvider null means disabled.
 	 * @return
 	 */
-	public PhysicsLoaderSettings usePhysics(PhysicsLoader<?> phyProvider);
+	public PhysicsLoaderSettings usePhysics(PhysicsLoader<?,?> phyProvider);
 
-	public PhysicsLoader<?> getPhysicsLoader();
+	public PhysicsLoader<?,?> getPhysicsLoader();
 
 	/**
 	 * @description Use VHACD to load dynamic mesh accurate shapes. [ default = null ]
