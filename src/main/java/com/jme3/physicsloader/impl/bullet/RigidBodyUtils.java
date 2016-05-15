@@ -18,7 +18,7 @@ public class RigidBodyUtils{
 	public static PhysicsJoint applyRBConstraint(final PhysicsLoaderSettings settings, final RigidBodyControl a,  final RigidBodyControl b, final ConstraintData data,Logger logger) {
 		if(data instanceof GenericConstraint){
 			GenericConstraint generic_constraint=(GenericConstraint)data;
-			SixDofJoint joint=new SixDofJoint(a,b,generic_constraint.pivotA,generic_constraint.privotB,true/*??*/);
+			SixDofJoint joint=new SixDofJoint(a,b,generic_constraint.pivotA,generic_constraint.pivotB,true/*??*/);
 			joint.setAngularUpperLimit(generic_constraint.upperAngularLimit);
 			joint.setAngularLowerLimit(generic_constraint.lowerAngularLimit);
 			joint.setLinearUpperLimit(generic_constraint.upperLinearLimit);
