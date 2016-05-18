@@ -35,8 +35,8 @@ public class BulletPhysicsLoader implements PhysicsLoader<PhysicsControl,Physics
 	}
 
 	@Override
-	public PhysicsJoint applyConstraint(PhysicsLoaderSettings settings, PhysicsControl a, PhysicsControl b, ConstraintData data) {
-		if(a instanceof RigidBodyControl && b instanceof RigidBodyControl)return applyRBConstraint(settings,(RigidBodyControl)a,(RigidBodyControl)b,data,logger);
+	public PhysicsJoint loadConstraint(PhysicsLoaderSettings settings, Object a, Object b, ConstraintData ct) {
+		if(a instanceof RigidBodyControl && b instanceof RigidBodyControl)return applyRBConstraint(settings,(RigidBodyControl)a,(RigidBodyControl)b,ct,logger);
 		return null;
 	}
 
