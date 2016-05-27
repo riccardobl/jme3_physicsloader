@@ -23,6 +23,7 @@ public class RigidBodyUtils{
 			joint.setAngularLowerLimit(generic_constraint.lowerAngularLimit);
 			joint.setLinearUpperLimit(generic_constraint.upperLinearLimit);
 			joint.setLinearLowerLimit(generic_constraint.lowerLinearLimit);
+			joint.setCollisionBetweenLinkedBodys(!generic_constraint.disableCollisionsBetweenLinkedNodes);
 			return joint;
 		}
 		

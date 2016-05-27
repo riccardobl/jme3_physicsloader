@@ -21,7 +21,8 @@ public class GenericConstraint implements ConstraintData{
 	lowerLinearLimit=Vector3f.NEGATIVE_INFINITY.clone(),
 	upperAngularLimit=Vector3f.POSITIVE_INFINITY.clone(),
 	lowerAngularLimit=Vector3f.NEGATIVE_INFINITY.clone();
-
+	public boolean disableCollisionsBetweenLinkedNodes=false;
+	
 	@Override
 	public void write(OutputStream os) throws IOException {	
 		DataOutputStream dos=new DataOutputStream(os);
@@ -31,6 +32,7 @@ public class GenericConstraint implements ConstraintData{
 		writeVec3(lowerLinearLimit,dos);
 		writeVec3(upperAngularLimit,dos);
 		writeVec3(lowerAngularLimit,dos);
+		dos.writeByte(disableCollisionsBetweenLinkedNodes?1:0);
 	}
 
 	@Override
@@ -42,6 +44,7 @@ public class GenericConstraint implements ConstraintData{
 		lowerLinearLimit=readVec3(dis);
 		upperAngularLimit=readVec3(dis);
 		lowerAngularLimit=readVec3(dis);
+		disableCollisionsBetweenLinkedNodes=is.read()==1;
 	}
 	
 	@Override
@@ -59,6 +62,7 @@ public class GenericConstraint implements ConstraintData{
 		out.append(upperAngularLimit.toString());
 		out.append(" To: ");
 		out.append(lowerAngularLimit.toString());		
+		out.append(", disableCollisions: ").append(disableCollisionsBetweenLinkedNodes);
 		return out.toString();		
 	}
 
