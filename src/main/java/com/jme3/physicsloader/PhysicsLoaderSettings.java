@@ -36,4 +36,14 @@ public interface PhysicsLoaderSettings{
 	public PhysicsLoaderSettings useEnhancedRigidbodies(boolean v);
 
 	public boolean useEnhancedRigidbodies();
+	
+	
+	/**
+	 * @description 
+	 * @param phyProvider null means disabled.
+	 * @return
+	 */
+	public PhysicsLoaderSettings useCacher(PhysicsCacher cacher);
+
+	public PhysicsCacher getCacher();
 }

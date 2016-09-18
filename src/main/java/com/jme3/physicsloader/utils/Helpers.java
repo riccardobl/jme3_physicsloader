@@ -1,10 +1,14 @@
 package com.jme3.physicsloader.utils;
 
+import java.io.ByteArrayOutputStream;
+import java.math.BigInteger;
 import java.nio.FloatBuffer;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import com.jme3.bounding.BoundingBox;
+import com.jme3.export.binary.BinaryExporter;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
@@ -14,6 +18,32 @@ import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.VertexBuffer.Type;
 
 public final class Helpers{
+	private static final BinaryExporter _EXPORTER=BinaryExporter.getInstance();
+
+	public static String meshHash(Mesh m, Type... types) {
+		try{
+			ByteArrayOutputStream bao=new ByteArrayOutputStream();
+
+			for(Type type:types){
+				VertexBuffer p_b=m.getBuffer(type);
+				_EXPORTER.save(p_b,bao);
+			}
+
+			byte bytes[]=bao.toByteArray();
+			bao.close();
+
+			MessageDigest md=MessageDigest.getInstance("MD5");
+			md.update(bytes);
+			byte[] digest=md.digest();
+			BigInteger bigInt=new BigInteger(1,digest);
+			String hash=bigInt.toString(16);
+			while(hash.length()<32)
+				hash="0"+hash;
+			return hash;
+		}catch(Exception e){
+			return null;
+		}
+	}
 
 	public static BoundingBox getBoundingBox(Spatial n) {
 		final Collection<VertexBuffer> meshes=new ArrayList<VertexBuffer>();

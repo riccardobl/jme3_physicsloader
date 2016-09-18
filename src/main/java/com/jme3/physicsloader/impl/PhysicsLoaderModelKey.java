@@ -1,6 +1,7 @@
 package com.jme3.physicsloader.impl;
 
 import com.jme3.asset.ModelKey;
+import com.jme3.physicsloader.PhysicsCacher;
 import com.jme3.physicsloader.PhysicsLoader;
 import com.jme3.physicsloader.PhysicsLoaderSettings;
 import com.jme3.physicsloader.impl.bullet.BulletPhysicsLoader;
@@ -10,7 +11,7 @@ public class PhysicsLoaderModelKey<RETURN_TYPE extends PhysicsLoaderSettings> ex
 	protected  PhysicsLoader<?,?> phyLoader;
 	protected Object vhacdFactory;
 	protected boolean	enhancedrbs=false;
-
+	protected PhysicsCacher cacher;
 	public PhysicsLoaderModelKey(){
 		super();
 	}
@@ -67,5 +68,17 @@ public class PhysicsLoaderModelKey<RETURN_TYPE extends PhysicsLoaderSettings> ex
 	@Override
 	public boolean useEnhancedRigidbodies() {
 		return enhancedrbs;
+	}
+
+	
+	@Override
+	public PhysicsLoaderSettings useCacher(PhysicsCacher cacher) {
+		this.cacher=cacher;
+		return this;
+	}
+
+	@Override
+	public PhysicsCacher getCacher() {
+		return this.cacher;
 	}
 }

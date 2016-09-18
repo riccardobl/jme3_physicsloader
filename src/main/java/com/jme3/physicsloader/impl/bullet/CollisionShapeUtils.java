@@ -26,10 +26,23 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.VertexBuffer.Type;
 
 public class CollisionShapeUtils{
 	public static CollisionShape buildCollisionShape(final PhysicsLoaderSettings settings, final Spatial spatial,PhysicsShape pshape,final boolean dynamic,final boolean useCompoundCapsule,Logger logger){
+		final CollisionShapeCacheEntry cache_entry=new CollisionShapeCacheEntry();
+		cache_entry.savable=spatial;
+		cache_entry.dynamic=dynamic;
+		cache_entry.useCompoundCapsule=useCompoundCapsule;
+		cache_entry.type=pshape.ordinal();
+		
+		if(settings.getCacher()!=null&&pshape!=PhysicsShape.MESH){
+			CollisionShape out=settings.getCacher().load(cache_entry);
+			if(out!=null)return out;
+		}
+		
 		CollisionShape collisionShape=null;
+	
 		switch(pshape){
 			case MESH:
 				Object vhacd_factory=settings.getVHACDFactory();
@@ -118,6 +131,10 @@ public class CollisionShapeUtils{
 			default:
 				// Should never happen.
 				logger.log(Level.WARNING,"{0} unsupported",pshape);
+		}
+		
+		if(settings.getCacher()!=null&&pshape!=PhysicsShape.MESH){
+				settings.getCacher().store(cache_entry,collisionShape);
 		}
 		return collisionShape;
 
