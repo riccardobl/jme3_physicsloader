@@ -1,4 +1,4 @@
-def DEV_MODE=true
+def DEV_MODE=false
 if (DEV_MODE){
 	apply plugin: "maven"
 	version="SNAPSHOT"
