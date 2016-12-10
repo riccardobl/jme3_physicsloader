@@ -41,7 +41,8 @@ public class PhysicsLoaderModelKey<RETURN_TYPE extends PhysicsLoaderSettings> ex
 			return (RETURN_TYPE)this;
 		}
 		try{
-			if(factory instanceof com.jme3.bullet.vhacd.VHACDCollisionShapeFactory||factory instanceof Boolean){
+			Class<?> vhacd_class=Class.forName("com.jme3.bullet.vhacd.VHACDCollisionShapeFactory");
+			if(factory.getClass().isAssignableFrom(vhacd_class)||factory instanceof Boolean){
 				vhacdFactory=factory;
 			}
 		}catch(Throwable e){}
