@@ -12,6 +12,8 @@ public class PhysicsLoaderModelKey<RETURN_TYPE extends PhysicsLoaderSettings> ex
 	protected Object vhacdFactory;
 	protected boolean	enhancedrbs=false;
 	protected PhysicsCacher cacher;
+	protected boolean static_vhacd=false;
+
 	public PhysicsLoaderModelKey(){
 		super();
 	}
@@ -82,4 +84,18 @@ public class PhysicsLoaderModelKey<RETURN_TYPE extends PhysicsLoaderSettings> ex
 	public PhysicsCacher getCacher() {
 		return this.cacher;
 	}
+
+	@Override
+	public PhysicsLoaderSettings useVHACDForStaticCollisions(boolean v) {
+		static_vhacd=v;
+		return this;
+	}
+
+	@Override
+	public boolean useVHACDForStaticCollisions() {
+		return static_vhacd;
+	}
+
+
+
 }

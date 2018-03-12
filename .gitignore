@@ -11,3 +11,10 @@ target
 *.so
 *.dll
 *.jar
+dist/
+.vscode/
+gradle/
+gradlew.bat
+gradlew
+gradle/
+.gradle/

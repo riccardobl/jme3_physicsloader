@@ -1,10 +1,15 @@
 package com.jme3.physicsloader.impl.bullet;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.export.InputCapsule;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
+import com.jme3.export.OutputCapsule;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -19,8 +24,14 @@ public class BulletEnhancedRigidBodyControl extends RigidBodyControl implements 
 	  Allow kinematic rb to be moved with setLocal* methods.
 	 */
 	protected AtomicBoolean locationUpdatedFromPhysicsK=new AtomicBoolean(false),rotationUpdatedFromPhysicsK=new AtomicBoolean(false);
-	protected boolean updateGravity=false,updateTransformFromSpatial=false;
+	protected boolean updateGravity=true,updateTransformFromSpatial=true;
 
+	
+
+	public BulletEnhancedRigidBodyControl(){
+		super();
+	}
+	
 	public BulletEnhancedRigidBodyControl(float mass){
 		super(mass);
 	}
@@ -36,7 +47,12 @@ public class BulletEnhancedRigidBodyControl extends RigidBodyControl implements 
 	@Override
 	public BulletEnhancedRigidBodyControl jmeClone() {
 		BulletEnhancedRigidBodyControl control=new BulletEnhancedRigidBodyControl(collisionShape,mass);
-		control.setSpatial(spatial);
+		control.locationUpdatedFromPhysicsK=new AtomicBoolean(locationUpdatedFromPhysicsK.get());
+		control.rotationUpdatedFromPhysicsK=new AtomicBoolean(rotationUpdatedFromPhysicsK.get());
+//		control.updateGravity=true;
+//		control.updateTransformFromSpatial=true;
+		
+		control.spatial=spatial;
 		control.setAngularFactor(getAngularFactor());
 		control.setAngularSleepingThreshold(getAngularSleepingThreshold());
 		control.setCcdMotionThreshold(getCcdMotionThreshold());
@@ -67,6 +83,11 @@ public class BulletEnhancedRigidBodyControl extends RigidBodyControl implements 
     @Override
     public Control cloneForSpatial(Spatial spatial) {
     	BulletEnhancedRigidBodyControl control=new BulletEnhancedRigidBodyControl(collisionShape,mass);
+//		control.locationUpdatedFromPhysicsK=new AtomicBoolean(locationUpdatedFromPhysicsK.get());
+//		control.rotationUpdatedFromPhysicsK=new AtomicBoolean(rotationUpdatedFromPhysicsK.get());
+//		control.updateGravity=true;
+//		control.updateTransformFromSpatial=true;
+    	
 		control.setSpatial(spatial);
 		control.setAngularFactor(getAngularFactor());
 		control.setAngularSleepingThreshold(getAngularSleepingThreshold());
@@ -119,7 +140,9 @@ public class BulletEnhancedRigidBodyControl extends RigidBodyControl implements 
 	}
 
 	private Vector3f getSpatialTranslation() {
-		if(motionState.isApplyPhysicsLocal()){ return spatial.getLocalTranslation(); }
+		if(motionState.isApplyPhysicsLocal()){
+			return spatial.getLocalTranslation(); }
+		
 		return spatial.getWorldTranslation();
 	}
 
@@ -166,9 +189,10 @@ public class BulletEnhancedRigidBodyControl extends RigidBodyControl implements 
 			}
 			
 			if(updateTransformFromSpatial){
-				setPhysicsLocation(getSpatialTranslation());
-				setPhysicsRotation(getSpatialRotation());
+				setPhysicsLocation( getSpatialTranslation());
+				setPhysicsRotation( getSpatialRotation());
 				updateTransformFromSpatial=false;
+				return;
 			}
 
 			if(isKinematic()&&kinematicSpatial){
@@ -182,4 +206,27 @@ public class BulletEnhancedRigidBodyControl extends RigidBodyControl implements 
 			}
 		}
 	}
+	
+	
+
+    @Override
+    public void write(JmeExporter ex) throws IOException {
+        super.write(ex);
+        OutputCapsule oc = ex.getCapsule(this);
+        oc.write(enabled, "enabled", true);
+        oc.write(motionState.isApplyPhysicsLocal(), "applyLocalPhysics", false);
+        oc.write(kinematicSpatial, "kinematicSpatial", true);
+        oc.write(spatial, "spatial", null);
+    }
+
+    @Override
+    public void read(JmeImporter im) throws IOException {
+        super.read(im);
+        InputCapsule ic = im.getCapsule(this);
+        enabled = ic.readBoolean("enabled", true);
+        kinematicSpatial = ic.readBoolean("kinematicSpatial", true);
+        spatial = (Spatial) ic.readSavable("spatial", null);
+        motionState.setApplyPhysicsLocal(ic.readBoolean("applyLocalPhysics", false));
+        setUserObject(spatial);
+    }
 }

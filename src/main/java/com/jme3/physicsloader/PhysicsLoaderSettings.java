@@ -1,12 +1,13 @@
 package com.jme3.physicsloader;
 
 public interface PhysicsLoaderSettings{
+
 	/**
 	 * @description Enable physics with the default physics loader [ default = false ]
-	 * @param useDefault
+	 * @param v
 	 * @return
 	 */
-	public PhysicsLoaderSettings usePhysics(boolean useDefault);
+	public PhysicsLoaderSettings usePhysics(boolean v);
 
 	/**
 	 * @description Enable physics with the given physics loader [ default = null ]
@@ -26,6 +27,16 @@ public interface PhysicsLoaderSettings{
 	 */
 	public PhysicsLoaderSettings useVHACD(Object factory);
 
+		
+	/**
+	 * @description Use VHACD to simplify mesh accurate static collision shapes.
+	 * @param v [default=false]
+	 * @return
+	 */
+	public PhysicsLoaderSettings useVHACDForStaticCollisions(boolean v);
+
+	public boolean useVHACDForStaticCollisions();
+	
 	public Object getVHACDFactory();
 
 	/**	
@@ -37,6 +48,8 @@ public interface PhysicsLoaderSettings{
 
 	public boolean useEnhancedRigidbodies();
 	
+	
+
 	
 	/**
 	 * @description 
