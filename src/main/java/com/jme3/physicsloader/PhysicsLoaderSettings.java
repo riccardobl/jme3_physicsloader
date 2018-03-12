@@ -3,23 +3,22 @@ package com.jme3.physicsloader;
 public interface PhysicsLoaderSettings{
 
 	/**
-	 * @description Enable physics with the default physics loader [ default = false ]
+	 *   Enable physics with the default physics loader [ default = false ]
 	 * @param v
 	 * @return
 	 */
 	public PhysicsLoaderSettings usePhysics(boolean v);
 
 	/**
-	 * @description Enable physics with the given physics loader [ default = null ]
+	 *   Enable physics with the given physics loader [ default = null ]
 	 * @param phyProvider null means disabled.
-	 * @return
 	 */
 	public PhysicsLoaderSettings usePhysics(PhysicsLoader<?,?> phyProvider);
 
 	public PhysicsLoader<?,?> getPhysicsLoader();
 
 	/**
-	 * @description Use VHACD to load dynamic mesh accurate shapes. [ default = null ]
+	 *   Use VHACD to load dynamic mesh accurate shapes. [ default = null ]
 	 * @param factory can be either an instance of VHACDCollisionShapeFactory or a boolean. 
 	 * When a boolean is passed, the default implementation with default settings is used.
 	 * null means disabled.
@@ -29,7 +28,7 @@ public interface PhysicsLoaderSettings{
 
 		
 	/**
-	 * @description Use VHACD to simplify mesh accurate static collision shapes.
+	 *   Use VHACD to simplify mesh accurate static collision shapes.
 	 * @param v [default=false]
 	 * @return
 	 */
@@ -40,7 +39,7 @@ public interface PhysicsLoaderSettings{
 	public Object getVHACDFactory();
 
 	/**	
-	 * @description [ default = false ]
+	 *   [ default = false ]
 	 * @param v
 	 * @return
 	 */
@@ -52,8 +51,8 @@ public interface PhysicsLoaderSettings{
 
 	
 	/**
-	 * @description 
-	 * @param phyProvider null means disabled.
+	 *   
+	 * @param cacher null means disabled.
 	 * @return
 	 */
 	public PhysicsLoaderSettings useCacher(PhysicsCacher cacher);

@@ -21,7 +21,7 @@ public class BulletPhysicsLoader implements PhysicsLoader<PhysicsControl,Physics
 	protected boolean useCompoundCapsule=false;
 
 	/**
-	 * @description Use a compound shape instead of CapsuleCollisionShape. See https://hub.jmonkeyengine.org/t/btcapsuleshape-location-isnt-accurate-at-all/35752/15 for more info.
+	 *   Use a compound shape instead of CapsuleCollisionShape. See https://hub.jmonkeyengine.org/t/btcapsuleshape-location-isnt-accurate-at-all/35752/15 for more info.
 	 * @param v
 	 * @return
 	 */
