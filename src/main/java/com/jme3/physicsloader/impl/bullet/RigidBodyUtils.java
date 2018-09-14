@@ -34,7 +34,7 @@ public class RigidBodyUtils{
 		CollisionShape collisionShape=CollisionShapeUtils.buildCollisionShape(settings,spatial,data.shape,	data.type==RigidBodyType.DYNAMIC,useCompoundCapsule,logger);
 		if(collisionShape==null) return null;
 		collisionShape.setMargin(data.margin);
-		GhostControl ghost=new GhostControl(collisionShape);
+		GhostControl ghost=settings.useEnhancedGhostbodies()?new BulletEnhancedGhostControl(settings.getPhysicsLoader(),collisionShape):new GhostControl(collisionShape);
 		return ghost;
 	}
 	
@@ -45,7 +45,7 @@ public class RigidBodyUtils{
 		collisionShape.setMargin(data.margin);
 
 		float mass=data.type==RigidBodyType.STATIC?0:data.mass;
-		RigidBodyControl rigidbody=settings.useEnhancedRigidbodies()?new BulletEnhancedRigidBodyControl(collisionShape,mass):new RigidBodyControl(collisionShape,mass);
+		RigidBodyControl rigidbody=settings.useEnhancedRigidbodies()?new BulletEnhancedRigidBodyControl(settings.getPhysicsLoader(),collisionShape,mass):new RigidBodyControl(collisionShape,mass);
 		rigidbody.setFriction(data.friction);
 		rigidbody.setAngularDamping(data.angularDamping);
 		rigidbody.setLinearDamping(data.linearDamping);

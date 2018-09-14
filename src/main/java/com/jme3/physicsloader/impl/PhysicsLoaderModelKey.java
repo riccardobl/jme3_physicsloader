@@ -1,6 +1,7 @@
 package com.jme3.physicsloader.impl;
 
 import com.jme3.asset.ModelKey;
+import com.jme3.export.Savable;
 import com.jme3.physicsloader.PhysicsCacher;
 import com.jme3.physicsloader.PhysicsLoader;
 import com.jme3.physicsloader.PhysicsLoaderSettings;
@@ -8,9 +9,9 @@ import com.jme3.physicsloader.impl.bullet.BulletPhysicsLoader;
 
 @SuppressWarnings("unchecked")
 public class PhysicsLoaderModelKey<RETURN_TYPE extends PhysicsLoaderSettings> extends ModelKey implements PhysicsLoaderSettings {
-	protected  PhysicsLoader<?,?> phyLoader;
+	protected  PhysicsLoader<? ,?> phyLoader;
 	protected Object vhacdFactory;
-	protected boolean	enhancedrbs=false;
+	protected boolean	enhancedrbs=false,enhancedrgh=false;
 	protected PhysicsCacher cacher;
 	protected boolean static_vhacd=false;
 
@@ -58,7 +59,7 @@ public class PhysicsLoaderModelKey<RETURN_TYPE extends PhysicsLoaderSettings> ex
 	}
 	
 	@Override
-	public PhysicsLoader<?,?> getPhysicsLoader(){
+	public PhysicsLoader<?,?>  getPhysicsLoader(){
 		return phyLoader;
 	}
 
@@ -69,11 +70,23 @@ public class PhysicsLoaderModelKey<RETURN_TYPE extends PhysicsLoaderSettings> ex
 	}
 
 	@Override
+	public RETURN_TYPE useEnhancedGhostbodies(boolean v) {
+		enhancedrgh=v;
+		return (RETURN_TYPE)this;
+	}
+
+	
+
+	@Override
 	public boolean useEnhancedRigidbodies() {
 		return enhancedrbs;
 	}
 
-	
+	@Override
+	public boolean useEnhancedGhostbodies() {
+		return enhancedrgh;
+	}
+
 	@Override
 	public PhysicsLoaderSettings useCacher(PhysicsCacher cacher) {
 		this.cacher=cacher;

@@ -45,7 +45,11 @@ public interface PhysicsLoaderSettings{
 	 */
 	public PhysicsLoaderSettings useEnhancedRigidbodies(boolean v);
 
+	public PhysicsLoaderSettings useEnhancedGhostbodies(boolean v);
+
+
 	public boolean useEnhancedRigidbodies();
+	public boolean useEnhancedGhostbodies();
 	
 	
 

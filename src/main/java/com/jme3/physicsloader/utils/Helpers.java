@@ -86,6 +86,10 @@ public final class Helpers{
 				if(v.z>max.z) max.z=v.z;
 			}
 		}
+		if(min==null||max==null){
+			min=new Vector3f();
+			max=new Vector3f();
+		}
 		return new BoundingBox(min,max);
 	}
 
