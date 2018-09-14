@@ -50,15 +50,7 @@ publishing {
 
 repositories {
 	mavenLocal()
-      maven {
-            url "http://127.0.0.1:48889/"
-        }
-        maven {
-            url "http://192.168.2.20:8000/"
-        }
-        maven {
-            url "https://maven.frk.wf/"
-        }
+   
 	jcenter()
     maven { url "https://jitpack.io" }
     maven{ url "http://dl.bintray.com/riccardo/v-hacd" }
